@@ -3,7 +3,7 @@
   <a href="https://github.com/konkor/onedown"><img src="https://img.shields.io/github/stars/konkor/onedown.svg?style=social&label=Star&style=flat-square" alt="Stars"></a>
 </p>
 
-# [OneDown - Shutdown Timer GUI](data/screenshots/screenshot.png)
+# [OneDown - Shutdown Timer GUI](https://github.com/konkor/onedown)
 
 
 OneDown is an GPLv3-licensed open source project for Linux users. It's an independent project with its ongoing development made possible entirely thanks to the support.
@@ -12,7 +12,7 @@ Please, consider to support the project and make it better!
 
 **OneDown** helps to schedule the next shutdown. It has a modern GUI and using a convinient user police to able power-off, halt or reboot the machine.
 
-![screencast](https://i.imgur.com/NZdkhYd.png)
+![screencast](/data/screenshots/screenshot.png?raw=true)
 
 ## How-to use
 
