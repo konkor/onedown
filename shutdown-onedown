@@ -1,0 +1,138 @@
+#!/usr/bin/env bash
+
+VERSION='1'
+VERBOSE=0
+ACTION='-h'
+TIMEDOWN='+90'
+
+## parse special options
+for i in "$@"
+do
+case $i in
+  -v|--verbose)
+  VERBOSE=1
+  shift
+  ;;
+  -t=*|--time=*)
+  TIMEDOWN="${i#*=}"
+  shift
+  ;;
+  -*)
+  OPTION=$i
+  shift
+  ;;
+  *) # unknown
+  TIMEDOWN=$i
+  ;;
+esac
+done
+
+function help () {
+  echo "Package version: "$VERSION
+  echo "Usage:"
+  echo " shutdown-onedown [TIME] [OPTION[=VALUE]...]"
+  echo ""
+  echo "  --help          Show help options"
+  echo "  --version       Package version"
+  echo "  --verbose, -v   Verbose output"
+  echo ""
+  echo "  --time=TIME     Time until action (now,minutes,hh:mm)"
+  echo "  --down, -h      Power-off the machine unless --halt is specified"
+  echo "  --poweroff, -P  Power-off the machine"
+  echo "  --halt, -H      Halt the machine"
+  echo "  --reboot, -R    Reboot the machine"
+  echo "  --cancel, -c    Cancel a planned shutdown"
+}
+
+function info () {
+  echo "Use --help argument to see available options"
+}
+
+function oneshutdown () {
+  shutdown $ACTION $TIMEDOWN
+  verbose "shutdown "$ACTION $TIMEDOWN
+}
+
+function verbose () {
+  if [ $VERBOSE = 1 ]
+  then
+    echo $1
+  fi
+}
+
+if [ -z $OPTION ] # No options
+then
+  info
+  exit
+fi
+if [ $OPTION = "--help" ]
+then
+  help
+  exit
+fi
+if [ $OPTION = "--version" ]
+then
+  echo $VERSION
+  exit
+fi
+
+if [ $OPTION = "--down" ]
+then
+  ACTION='-h'
+  oneshutdown
+  exit
+fi
+
+if [ $OPTION = "--poweroff" ]
+then
+  ACTION='-P'
+  oneshutdown
+  exit
+fi
+
+if [ $OPTION = "--halt" ]
+then
+  ACTION='-H'
+  oneshutdown
+  exit
+fi
+
+if [ $OPTION = "--reboot" ]
+then
+  ACTION='-R'
+  oneshutdown
+  exit
+fi
+
+if [ $OPTION = "--cancel" ]
+then
+  ACTION='-c'
+  TIMEDOWN=''
+  oneshutdown
+  exit
+fi
+
+if [ $OPTION = "--install" ]
+then
+  echo 'installing helpers...'
+  cp $0 /usr/bin/
+  echo 'installing policy...'
+  cp $(dirname "$(readlink -f "$0")")/konkor.onedown.policy /usr/share/polkit-1/actions/
+  echo "done"
+  exit
+fi
+if [ $OPTION = "--uninstall" ]
+then
+  echo 'uninstalling helper...'
+  rm /usr/bin/shutdown-onedown
+  echo 'uninstalling policy...'
+  rm /usr/share/polkit-1/actions/konkor.onedown.policy
+  echo "done"
+  exit
+fi
+if [ $OPTION = "--reset" ]
+then
+  echo 'reset to default values...'
+  dconf reset -f "/org/konkor/onedown/"
+  exit
+fi
