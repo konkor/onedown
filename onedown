@@ -22,7 +22,7 @@ var Format = imports.format;
 String.prototype.format = Format.format;
 
 const MAXMIN = 1440;
-const APPDIR = getCurrentFile ()[1];
+const APPDIR = get_appdir ();
 imports.searchPath.unshift(APPDIR);
 
 let theme_gui = APPDIR + "/data/themes/default/gtk.css";
@@ -267,6 +267,10 @@ function get_css_provider () {
     return cssp;
 }
 
+function debug (msg) {
+    if (DEBUGGING) print (msg);
+}
+
 function getCurrentFile () {
     let stack = (new Error()).stack;
     let stackLine = stack.split("\n")[1];
@@ -278,6 +282,19 @@ function getCurrentFile () {
     let path = match[1];
     let file = Gio.File.new_for_path (path);
     return [file.get_path(), file.get_parent().get_path(), file.get_basename()];
+}
+
+function get_appdir () {
+    let s = getCurrentFile ()[1];
+    if (GLib.file_test (s + "/konkor.onedown.policy", GLib.FileTest.EXISTS)) return s;
+    s = GLib.get_home_dir () + "/.local/share/onedown";
+    if (GLib.file_test (s + "/konkor.onedown.policy", GLib.FileTest.EXISTS)) return s;
+    s = "/usr/local/share/onedown";
+    if (GLib.file_test (s + "/konkor.onedown.policy", GLib.FileTest.EXISTS)) return s;
+    s = "/usr/share/onedown";
+    if (GLib.file_test (s + "/konkor.onedown.policy", GLib.FileTest.EXISTS)) return s;
+    throw "OneDown installation not found...";
+    return s;
 }
 
 let app = new CustomApplication (ARGV);
