@@ -1,0 +1,11 @@
+[Desktop Entry]
+Name=One Down Tilldawn
+Comment=Shutdown Timer
+Exec=onedown
+Icon=io.github.konkor.onedown
+Terminal=false
+Type=Application
+Categories=GTK;GNOME;AudioVideo;Player;Video;
+Keywords=shutdown;timer;Utility;
+StartupNotify=true
+Name[en_US]=One Down Tilldawn
