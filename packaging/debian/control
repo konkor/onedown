@@ -1,0 +1,19 @@
+Source: onedown
+Maintainer: konkor <kapa76@gmail.com>
+Section: misc
+Priority: optional
+Standards-Version: 3.9.2
+Build-Depends: debhelper (>= 9),
+               dh-autoreconf,
+               intltool
+
+Package: onedown
+Architecture: all
+Depends: ${shlibs:Depends},
+         ${misc:Depends},
+         gir1.2-gtk-3.0,
+         gjs,
+	 policykit-1
+Recommends: 
+Description: Shutdown Timer
+ System shutdown planning with GUI.
