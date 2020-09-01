@@ -1,6 +1,15 @@
-onedown (0.2.0-1) UNRELEASED; urgency=low
+onedown (0.3.0-1) UNRELEASED; urgency=low
 
   * Next release
+
+ -- konkor <kapa76@gmail.com>  Sun, 01 Sep 2020 22:00:00 +0200
+
+onedown (0.2.0-1) UNRELEASED; urgency=low
+
+  * Add infobar notifications
+  * Add timer for clocks
+  * Add menu options for a type of the shutdown
+  * Update minor fixes
 
  -- konkor <kapa76@gmail.com>  Sun, 01 Sep 2020 15:00:00 +0200
 

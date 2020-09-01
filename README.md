@@ -14,8 +14,8 @@ Please, consider to support the project and make it better!
 
 <p align="center">
 <img src="https://github.com/konkor/onedown/blob/master/data/screenshots/screenshot.png?raw=true" alt="screencast" title="">
-<a href="https://github.com/konkor/onedown/releases/download/v0.1/onedown_0.1.0-1_all.deb"><img src="https://i.imgur.com/Oe4O8bm.png" alt="Latest deb package" title="Ubuntu/Debian/Mint/Elementary..."></a></br>
-<a href="https://github.com/konkor/newstream/releases/">other releases</a>
+<a href="https://github.com/konkor/onedown/releases/download/v0.2/onedown_0.2.0-1_all.deb"><img src="https://i.imgur.com/Oe4O8bm.png" alt="Latest deb package" title="Ubuntu/Debian/Mint/Elementary..."></a></br>
+<a href="https://github.com/konkor/onedown/releases/">other releases</a>
 </p>
 
 ## How-to use
