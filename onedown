@@ -86,6 +86,7 @@ var CustomApplication = new Lang.Class ({
 
     build: function() {
         this.window.set_default_size (640, 320);
+        this.window.set_position (Gtk.WindowPosition.CENTER);
         Gtk.Settings.get_default().gtk_application_prefer_dark_theme = true;
         cssp = get_css_provider ();
         if (cssp) {
