@@ -155,6 +155,16 @@ var CustomApplication = new Lang.Class ({
           this.time.set_text (timedown.toLocaleString());
         });
         this.run_button.connect ('toggled', this.on_run.bind (this));
+        GLib.timeout_add (0, 500, () => {
+            if (this.run_button.active) {
+                this.minutes.value = Math.floor ( (timedown - Date.now ())/60000);
+            } else {
+                this.minutes.value = minutes;
+                timedown = new Date (Date.now () + minutes*60000);
+                this.time.set_text (timedown.toLocaleString());
+            }
+            return true;
+        });
     },
     
     on_run: function (o) {
