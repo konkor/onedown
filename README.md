@@ -14,6 +14,11 @@ Please, consider to support the project and make it better!
 
 ![screencast](/data/screenshots/screenshot.png?raw=true)
 
+<p align="center">
+<a href="https://github.com/konkor/onedown/releases/download/v0.1/onedown_0.1.0-1_all.deb"><img src="https://i.imgur.com/Oe4O8bm.png" alt="Latest deb package" title="Ubuntu/Debian/Mint/Elementary..."></a></br>
+<a href="https://github.com/konkor/newstream/releases/">other releases</a>
+</p>
+
 ## How-to use
 
 Just select a desired time interval in minutes and press the Power button on the header bar.
