@@ -33,6 +33,7 @@ let debugging = false;
 let infobar_event = 0;
 let timedown = new Date (Date.now () + 90*60000);
 let minutes = 90;
+let options = "--down";
 
 var shutdown_path = null;
 var pkexec_path = null;
@@ -101,7 +102,7 @@ var CustomApplication = new Lang.Class ({
         this.run_button = new RunButton ();
         this.hb.add (this.run_button);
         
-        this.home = new Gtk.Button ({always_show_image: true, label: "One Down", tooltip_text:"Home"});
+        this.home = new Gtk.Button ({always_show_image: true, label: "One Down Tilldawn", tooltip_text:"Home"});
         //this.home.image = Gtk.Image.new_from_file (APPDIR + "/data/icons/io.github.konkor.newstream.svg");
         //this.home.get_style_context ().add_class ("hb-button");
         this.home.set_relief (Gtk.ReliefStyle.NONE);
@@ -139,7 +140,33 @@ var CustomApplication = new Lang.Class ({
         //this.date = new Gtk.Label ({label: d.toDateString() });
         //box.pack_start (this.date, true, true, 8);
 
-        let mmenu = new Gtk.Menu (), mii;
+        let mmenu = new Gtk.Menu (), mii, rmi, rgroup = [];
+
+        mii = new Gtk.MenuItem ({label:"Shutdown type"});
+        mii.sensitive = false;
+        mmenu.add (mii);
+
+        rmi = Gtk.RadioMenuItem.new_with_label (rgroup, "Power-off");
+        rgroup = rmi.get_group ();
+        rmi.set_active (true);
+        mmenu.add (rmi);
+        rmi.connect ("toggled", (o)=>{
+          if (o.active) options = "--down";
+        });
+        rmi = Gtk.RadioMenuItem.new_with_label (rgroup, "Halt");
+        rgroup = rmi.get_group ();
+        //rmi.set_active (false);
+        mmenu.add (rmi);
+        rmi.connect ("toggled", (o)=>{
+          if (o.active) options = "--halt";
+        });
+        rmi = Gtk.RadioMenuItem.new_with_label (rgroup, "Reboot");
+        rgroup = rmi.get_group ();
+        rmi.set_active (false);
+        mmenu.add (rmi);
+        rmi.connect ("toggled", (o)=>{
+          if (o.active) options = "--reboot";
+        });
 
         mmenu.add (new Gtk.SeparatorMenuItem ());
         mii = new Gtk.MenuItem ({label:"About"});
@@ -172,8 +199,8 @@ var CustomApplication = new Lang.Class ({
         GLib.spawn_command_line_sync ("%s %s --cancel --verbose".format (pkexec_path, shutdown_path));
         if (o.active) {
             try {
-                GLib.spawn_command_line_sync ("%s %s --down --time=%s --verbose".format (pkexec_path, shutdown_path, minutes));
-                this.show_info ("Shutdown is planned on " + timedown.toLocaleString());
+                GLib.spawn_command_line_sync ("%s %s %s --time=%s --verbose".format (pkexec_path, shutdown_path, options, minutes));
+                this.show_info ("Shutdown is planned on " + timedown.toLocaleString() + " to " + options.substring (2));
             } catch (e) {
                 this.show_message ("ERROR: Something wrong, check logs for detailed info.", Gtk.MessageType.ERROR, 10);
                 print (e.msg);
@@ -182,7 +209,6 @@ var CustomApplication = new Lang.Class ({
     },
 
     about: function () {
-      print (this.window.icon);
       let dlg = new Gtk.AboutDialog ({
         transient_for: this.window,
         program_name: "One Down",
