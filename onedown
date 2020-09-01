@@ -14,6 +14,7 @@ const Gtk = imports.gi.Gtk;
 const GLib = imports.gi.GLib;
 const Gio = imports.gi.Gio;
 const Lang = imports.lang;
+const System = imports.system;
 
 const Gettext = imports.gettext.domain('org.konkor.onedown');
 const _ = Gettext.gettext;
@@ -29,6 +30,7 @@ let theme_gui = APPDIR + "/data/themes/default/gtk.css";
 let cssp = null;
 
 let debugging = false;
+let infobar_event = 0;
 let timedown = new Date (Date.now () + 90*60000);
 let minutes = 90;
 
@@ -120,6 +122,10 @@ var CustomApplication = new Lang.Class ({
         //box.get_style_context ().add_class ("info-item");
         this.window.add (box);
 
+        this.infobar = null;
+        this.infobox = new Gtk.Box ({orientation:Gtk.Orientation.HORIZONTAL, margin:0});
+        box.add (this.infobox);
+
         this.slider = new Slider ("Shutdown", "minutes", "Set the Shutdown Interval");
         box.pack_start (this.slider, false, false, 0);
 
@@ -154,8 +160,14 @@ var CustomApplication = new Lang.Class ({
     on_run: function (o) {
         GLib.spawn_command_line_sync ("%s %s --cancel --verbose".format (pkexec_path, shutdown_path));
         if (o.active) {
-            GLib.spawn_command_line_sync ("%s %s --down --time=%s --verbose".format (pkexec_path, shutdown_path, minutes));
-        }
+            try {
+                GLib.spawn_command_line_sync ("%s %s --down --time=%s --verbose".format (pkexec_path, shutdown_path, minutes));
+                this.show_info ("Shutdown is planned on " + timedown.toLocaleString());
+            } catch (e) {
+                this.show_message ("ERROR: Something wrong, check logs for detailed info.", Gtk.MessageType.ERROR, 10);
+                print (e.msg);
+            }
+        } else this.show_info ("All planned shutdowns is canceled.");
     },
 
     about: function () {
@@ -173,6 +185,44 @@ var CustomApplication = new Lang.Class ({
       dlg.set_logo (this.window.icon);
       dlg.run ();
       dlg.destroy ();
+    },
+
+    show_message: function (text, bar_type, timeout) {
+        this.unschedule_message ();
+        this.infobar = new Gtk.InfoBar ();
+        if (bar_type == Gtk.MessageType.QUESTION) {
+            this.infobar.add_button ("gtk-yes", Gtk.ResponseType.YES);
+            this.infobar.add_button ("gtk-cancel", Gtk.ResponseType.CANCEL);
+        } else {
+            this.infobar.add_button ("gtk-close", Gtk.ResponseType.YES);
+            this.infobar.set_default_response (Gtk.ResponseType.OK);
+        }
+        this.infobar.set_message_type (bar_type);
+        var content = this.infobar.get_content_area ();
+        content.add (new Gtk.Label ({label: text, use_markup:true, xalign:0.75}));
+
+        this.infobox.add (this.infobar);
+        this.infobar.show_all ();
+        this.infobar.connect ('response', (o, e) => {
+            //print (e, Gtk.ResponseType.YES, Gtk.ResponseType.OK);
+            this.unschedule_message ();
+        });
+        if (timeout) infobar_event = GLib.timeout_add_seconds (0, timeout, () => {
+            this.unschedule_message ();
+            return false;
+        });
+    },
+
+    unschedule_message: function () {
+        if (infobar_event) GLib.Source.remove (infobar_event);
+        infobar_event = 0;
+        if (this.infobar) try {this.infobar.destroy ();}catch(e){}
+        this.infobar = null;
+        System.gc();
+    },
+
+    show_info: function (text) {
+        this.show_message (text, Gtk.MessageType.INFO, 10);
     }
 });
 
