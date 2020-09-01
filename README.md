@@ -12,9 +12,8 @@ Please, consider to support the project and make it better!
 
 **OneDown** helps to schedule the next shutdown. It has a modern GUI and using a convinient user police to able power-off, halt or reboot the machine.
 
-![screencast](/data/screenshots/screenshot.png?raw=true)
-
 <p align="center">
+![screencast](/data/screenshots/screenshot.png?raw=true)
 <a href="https://github.com/konkor/onedown/releases/download/v0.1/onedown_0.1.0-1_all.deb"><img src="https://i.imgur.com/Oe4O8bm.png" alt="Latest deb package" title="Ubuntu/Debian/Mint/Elementary..."></a></br>
 <a href="https://github.com/konkor/newstream/releases/">other releases</a>
 </p>
