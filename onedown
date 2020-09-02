@@ -29,8 +29,9 @@ imports.searchPath.unshift(APPDIR);
 let theme_gui = APPDIR + "/data/themes/default/gtk.css";
 let cssp = null;
 
-let debugging = false;
+let DEBUG_LVL = 0;
 let infobar_event = 0;
+let clocks_event = 0;
 let timedown = new Date (Date.now () + 90*60000);
 let minutes = 90;
 let options = "--down";
@@ -47,30 +48,65 @@ var CustomApplication = new Lang.Class ({
     _init: function (args) {
         GLib.set_prgname ("onedown");
         this.parent ({
-            application_id: "org.konkor.onedown.application",
-            flags: Gio.ApplicationFlags.HANDLES_OPEN
+          application_id: "org.konkor.onedown.application",
+          flags: Gio.ApplicationFlags.HANDLES_OPEN
         });
         GLib.set_application_name ("One Down");
+
+        this.add_main_option (
+          'debug', 0, GLib.OptionFlags.NONE, GLib.OptionArg.NONE,
+          "Enable debugging messages", null
+        );
+        this.add_main_option (
+          'verbose', 0, GLib.OptionFlags.NONE, GLib.OptionArg.NONE,
+          "Enable verbose output", null
+        );
+        this.connect ('handle-local-options', this.on_local_options.bind (this));
+    },
+
+    on_local_options: function (app, options) {
+        try {
+          this.register (null);
+        } catch (e) {
+          print ("Failed to register: %s".format (e.message));
+        return 1;
+        }
+
+        if (options.contains ("verbose")) {
+          DEBUG_LVL = 1;
+        }
+        if (options.contains ("debug")) {
+          DEBUG_LVL = 2;
+        }
+
+        return -1;
     },
 
     vfunc_startup: function() {
         this.parent();
         this.window = new Gtk.Window ();
-        this.window.set_icon_name ("org.konkor.onedown");
+        this.window.set_icon_name ("io.github.konkor.onedown");
         if (!this.window.icon) try {
           this.window.icon = Gtk.Image.new_from_file (APPDIR + "/data/icons/hicolor/scalable/apps/io.github.konkor.onedown.svg").pixbuf;
         } catch (e) {
           print (e.message);
         }
-        //this.window.set_default_icon (this.window.icon);
         this.add_window (this.window);
         this.initialize ();
         this.build ();
+        this.window.connect ("destroy", this.on_destroy.bind (this));
     },
 
     vfunc_activate: function() {
         this.window.show_all ();
         this.window.present ();
+    },
+
+    on_destroy: function() {
+        if (infobar_event) GLib.Source.remove (infobar_event);
+        if (clocks_event) GLib.Source.remove (clocks_event);
+
+        return true;
     },
 
     initialize: function() {
@@ -183,7 +219,7 @@ var CustomApplication = new Lang.Class ({
           this.time.set_text (timedown.toLocaleString());
         });
         this.run_button.connect ('toggled', this.on_run.bind (this));
-        GLib.timeout_add (0, 500, () => {
+        clocks_event = GLib.timeout_add (0, 500, () => {
             if (this.run_button.active) {
                 this.minutes.value = Math.floor ( (timedown - Date.now ())/60000);
             } else {
@@ -354,8 +390,12 @@ function get_css_provider () {
     return cssp;
 }
 
+function info (msg) {
+    if (DEBUG_LVL > 0) print (msg);
+}
+
 function debug (msg) {
-    if (DEBUGGING) print (msg);
+    if (DEBUG_LVL > 1) print (msg);
 }
 
 function getCurrentFile () {
@@ -383,6 +423,8 @@ function get_appdir () {
     throw "OneDown installation not found...";
     return s;
 }
+
+ARGV.unshift (System.programInvocationName);
 
 let app = new CustomApplication (ARGV);
 app.run (ARGV);
