@@ -182,12 +182,19 @@ var CustomApplication = new Lang.Class ({
         mii.sensitive = false;
         mmenu.add (mii);
 
-        rmi = Gtk.RadioMenuItem.new_with_label (rgroup, "Power-off");
+        rmi = Gtk.RadioMenuItem.new_with_label (rgroup, "Shutdown");
         rgroup = rmi.get_group ();
         rmi.set_active (true);
         mmenu.add (rmi);
         rmi.connect ("toggled", (o)=>{
           if (o.active) options = "--down";
+        });
+
+        rmi = Gtk.RadioMenuItem.new_with_label (rgroup, "Power-off");
+        rgroup = rmi.get_group ();
+        mmenu.add (rmi);
+        rmi.connect ("toggled", (o)=>{
+          if (o.active) options = "--poweroff";
         });
         rmi = Gtk.RadioMenuItem.new_with_label (rgroup, "Halt");
         rgroup = rmi.get_group ();
@@ -198,7 +205,6 @@ var CustomApplication = new Lang.Class ({
         });
         rmi = Gtk.RadioMenuItem.new_with_label (rgroup, "Reboot");
         rgroup = rmi.get_group ();
-        rmi.set_active (false);
         mmenu.add (rmi);
         rmi.connect ("toggled", (o)=>{
           if (o.active) options = "--reboot";

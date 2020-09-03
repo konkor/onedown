@@ -85,21 +85,21 @@ fi
 
 if [ $OPTION = "--poweroff" ]
 then
-  ACTION='-P'
+  ACTION='--poweroff'
   oneshutdown
   exit
 fi
 
 if [ $OPTION = "--halt" ]
 then
-  ACTION='-H'
+  ACTION='--halt'
   oneshutdown
   exit
 fi
 
 if [ $OPTION = "--reboot" ]
 then
-  ACTION='-R'
+  ACTION='--reboot'
   oneshutdown
   exit
 fi
